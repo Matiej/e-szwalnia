@@ -22,12 +22,12 @@ public class AuthUserDto {
     private String password;
     private String matchPassword;
     private LocalDateTime createdDate;
-    private LocalDateTime firstLog0n;
+    private LocalDateTime firstLogon;
     private LocalDateTime lastLogon;
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<AuthUserRoleDto> authUserRoleDtoSet = new HashSet<>();
-    private EmployeeDto employeeDto;
+    private Set<AuthUserRoleDto> authUserRoleSet = new HashSet<>();
+    private EmployeeDto employee;
 
     public AuthUserDto(String email, String password, String matchPassword) {
         this.email = email;
