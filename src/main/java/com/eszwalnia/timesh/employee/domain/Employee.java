@@ -1,7 +1,6 @@
 package com.eszwalnia.timesh.employee.domain;
 
 import com.eszwalnia.timesh.authUser.domain.AuthUser;
-import com.eszwalnia.timesh.authUser.domain.dto.AuthUserDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,8 +14,6 @@ import java.time.LocalDate;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "EPL_ID")
     private Long id;
     @Column(name = "EPL_NAME")
     private String name;
@@ -26,9 +23,11 @@ public class Employee {
     private String email;
     @Column(name = "EPL_PHONE_NO")
     private String phoneNo;
-    @Column(name = "EPL_WORK_STAT_DATE")
+    @Column(name = "EPL_WORK_START_DATE")
     private LocalDate workStartDate;
 
-    @OneToOne(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "EPL_AUH_ID")
     private AuthUser authUser;
 }
