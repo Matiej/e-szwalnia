@@ -66,4 +66,14 @@ public class AuthUserController {
         return ResponseEntity.ok(authUserService.findAll());
     }
 
+    @DeleteMapping("delte")
+    @ApiOperation(value = "Delete authUser by id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "All users loaded from db successful."),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+            @ApiResponse(code = 503, message = "Server error. Can't get any users."),})
+    void delete(@RequestParam("id") Long id) {
+
+    }
+
 }
