@@ -17,7 +17,7 @@ class CreateAuthUserDtoConventer {
     public AuthUser convertToAuthUser(CreateAuthUserDto createAuthUserDto) {
         AuthUser authUser = new AuthUser();
         authUser.setEmail(createAuthUserDto.getEmail());
-        authUser.setPassword(createAuthUserDto.getPassword());
+        authUser.setPassword(createAuthUserDto.getPassword().trim().toLowerCase());
         authUser.setMatchPassword(createAuthUserDto.getMatchPassword());
         authUser.setCreatedDate(createAuthUserDto.getCreatedDate());
         authUser.setAuthUserRoleSet(authUserRoleSet(createAuthUserDto.getAuthRoles()));

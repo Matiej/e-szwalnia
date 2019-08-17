@@ -14,8 +14,6 @@ public class CreateAuthUserDto {
     private String password;
     private String matchPassword;
     private LocalDateTime createdDate;
-//    private LocalDateTime firstLog0n;
-//    private LocalDateTime lastLogon;
     private String[] authRoles;
     private CreateEmployeeDto createEmployeeDto;
 
