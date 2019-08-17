@@ -18,8 +18,8 @@ import java.util.Set;
 public class AuthUser {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "AUH_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "AUH_ID")
     private Long id;
     @Column(name = "AUH_EMAIL")
     private String email;
@@ -37,12 +37,12 @@ public class AuthUser {
     @ToString.Exclude
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLE",
-            joinColumns = {@JoinColumn(name = "AUH_EPL_ID", referencedColumnName = "AUH_EPL_ID")},
+            joinColumns = {@JoinColumn(name = "AUH_ID", referencedColumnName = "AUH_ID")},
             inverseJoinColumns = {@JoinColumn(name = "ROL_ID", referencedColumnName = "ROL_ID")})
     private Set<AuthUserRole> authUserRoleSet = new HashSet<>();
 
-    @MapsId
-    @JoinColumn(name = "AUH_EPL_ID")
-    @OneToOne(fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @OneToOne(mappedBy = "authUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
     private Employee employee;
 }

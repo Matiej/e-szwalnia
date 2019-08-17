@@ -30,6 +30,12 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getExceptionHandlerReponse(ex, webRequest));
     }
 
+    @ExceptionHandler(ExistEmailException.class)
+    public final ResponseEntity<Object> handleEmailExistException(RuntimeException rex, WebRequest webRequest) {
+        log.error("error message details ==> ", rex);
+        return ResponseEntity.status(409).body(getExceptionHandlerReponse(rex,webRequest));
+    }
+
     private ExceptionHandlerReponse getExceptionHandlerReponse(Exception ex, WebRequest request) {
         return new ExceptionHandlerReponse(LocalDateTime.now(), ex.getMessage(),
                 request.getDescription(false));
