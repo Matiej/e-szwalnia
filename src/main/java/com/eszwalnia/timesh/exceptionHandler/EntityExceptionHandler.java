@@ -2,6 +2,7 @@ package com.eszwalnia.timesh.exceptionHandler;
 
 import com.eszwalnia.timesh.authUser.AuthUserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.HibernateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +35,12 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<Object> handleEmailExistException(RuntimeException rex, WebRequest webRequest) {
         log.error("error message details ==> ", rex);
         return ResponseEntity.status(409).body(getExceptionHandlerReponse(rex,webRequest));
+    }
+
+    @ExceptionHandler(HibernateException.class)
+    public final ResponseEntity<Object> handleHibernateException(RuntimeException rex, WebRequest webRequest) {
+        log.error("error message details ==> ", rex);
+        return ResponseEntity.status(503).body(getExceptionHandlerReponse(rex, webRequest));
     }
 
     private ExceptionHandlerReponse getExceptionHandlerReponse(Exception ex, WebRequest request) {

@@ -3,10 +3,7 @@ package com.eszwalnia.timesh.authUser;
 import com.eszwalnia.timesh.authUser.domain.AuthUserService;
 import com.eszwalnia.timesh.authUser.domain.dto.AuthUserDto;
 import com.eszwalnia.timesh.authUser.domain.dto.CreateAuthUserDto;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +61,18 @@ public class AuthUserController {
             @ApiResponse(code = 503, message = "Server error. Can't get any users."),})
     ResponseEntity<Object> findAll() {
         return ResponseEntity.ok(authUserService.findAll());
+    }
+
+    @DeleteMapping("delte")
+    @ApiOperation(value = "Delete authUser by id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "All users loaded from db successful."),
+            @ApiResponse(code = 404, message = "Auth user does not exist! Can't update!"),
+            @ApiResponse(code = 503, message = "Server error. Can't get any users."),})
+    @ApiImplicitParam(required = true, name = "User Id", value = "Enter user Id", dataType = "Long")
+    ResponseEntity<Object> delete(@RequestParam("id") Long id) {
+        authUserService.deleteAuthUser(id);
+        return ResponseEntity.ok("Auth user id: " + id + " deleted successful");
     }
 
 }

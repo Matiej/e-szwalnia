@@ -23,7 +23,7 @@ public class AuthUserRole {
     private String name;
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "authUserRoleSet", targetEntity = AuthUser.class)
+    @ManyToMany(mappedBy = "authUserRoleSet", targetEntity = AuthUser.class)
     private Set<AuthUser> authUserSet = new HashSet<>();
 
 }
