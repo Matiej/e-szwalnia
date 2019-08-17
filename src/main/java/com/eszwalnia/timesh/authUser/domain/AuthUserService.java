@@ -17,5 +17,5 @@ public interface AuthUserService {
     AuthUserDto updateAuthUser(AuthUserDto authUserDto) throws ExistEmailException, HibernateException,
             AuthUserNotFoundException;
 
-    void deleteAuthUser(Long id);
+    boolean deleteAuthUser(Long id);
 }

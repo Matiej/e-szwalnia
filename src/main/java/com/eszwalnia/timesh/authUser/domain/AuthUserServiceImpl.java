@@ -8,8 +8,8 @@ import com.eszwalnia.timesh.exceptionHandler.ExistEmailException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.HibernateError;
 import org.hibernate.HibernateException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -71,14 +71,26 @@ class AuthUserServiceImpl implements AuthUserService {
                 throw new AuthUserNotFoundException("Auth user: " + authUserDto.getEmail() + " does not exist! Can't update!");
             }
         } catch (HibernateException e) {
-            throw new RuntimeException("Can't save update auth user because of some db error ", e);
+            throw new RuntimeException("Can't  update auth user because of some db error ", e);
         }
     }
 
     @Override
-    public void deleteAuthUser(Long id) {
-
+    public boolean deleteAuthUser(Long id) throws AuthUserNotFoundException, HibernateException {
+        boolean isDeleted;
+        try {
+            if(authUserRepository.existsById(id)) {
+                authUserRepository.deleteById(id);
+                isDeleted = true;
+            } else {
+                throw new AuthUserNotFoundException("Auth user id: " + id + " isn't exist. Cant' delete");
+            }
+        } catch (HibernateException e) {
+            throw new RuntimeException("Can't save update auth user because of some db error ", e);
+        }
+        return isDeleted;
     }
+
 
     private boolean isUserEmailExist(Long id, String email) {
         return authUserRepository.findByIdNot(id)
