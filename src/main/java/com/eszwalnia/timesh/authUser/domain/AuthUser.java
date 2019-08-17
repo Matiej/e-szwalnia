@@ -35,7 +35,7 @@ public class AuthUser {
     private LocalDateTime lastLogon;
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "USER_ROLE",
             joinColumns = {@JoinColumn(name = "AUH_ID", referencedColumnName = "AUH_ID")},
             inverseJoinColumns = {@JoinColumn(name = "ROL_ID", referencedColumnName = "ROL_ID")})
