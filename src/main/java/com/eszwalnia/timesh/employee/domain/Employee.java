@@ -2,7 +2,9 @@ package com.eszwalnia.timesh.employee.domain;
 
 import com.eszwalnia.timesh.authUser.domain.AuthUser;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -29,5 +31,7 @@ public class Employee {
     @MapsId
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "EPL_AUH_ID")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private AuthUser authUser;
 }
