@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <springProfile name="dev">
+        <property name="LOGS" value="./logs"/>
+    </springProfile>
 
-    <property name="LOGS" value="./logs" />
+    <springProfile name="prod">
+        <property name="LOGS" value="./var/opt/logs"/>
+    </springProfile>
 
     <appender name="CONSOLE"
               class="ch.qos.logback.core.ConsoleAppender">
@@ -30,7 +35,7 @@
                 <maxFileSize>10MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
-        <filter  class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ALL</level>
         </filter>
     </appender>
@@ -52,7 +57,7 @@
                 <maxFileSize>5MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
-        <filter  class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
     </appender>
@@ -74,23 +79,23 @@
                 <maxFileSize>5MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
-        <filter  class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
         </filter>
     </appender>
 
     <!-- LOG everything at INFO level -->
     <root level="info">
-        <appender-ref ref="FILE_ALL_LOGS" />
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE_ALL_LOGS"/>
+        <appender-ref ref="CONSOLE"/>
     </root>
 
     <!-- LOG "com.eszwalnia*" at DEBUG level -->
     <logger name="com.eszwalnia" level="ALL" additivity="false">
-        <appender-ref ref="FILE_ALL_LOGS" />
-        <appender-ref ref="FILE_SHORT_LOGS" />
-        <appender-ref ref="FILE_ERROR_LOGS" />
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE_ALL_LOGS"/>
+        <appender-ref ref="FILE_SHORT_LOGS"/>
+        <appender-ref ref="FILE_ERROR_LOGS"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
 </configuration>
