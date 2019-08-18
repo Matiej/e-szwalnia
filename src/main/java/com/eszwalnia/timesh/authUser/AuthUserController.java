@@ -70,7 +70,7 @@ public class AuthUserController {
             @ApiResponse(code = 404, message = "Auth user does not exist! Can't update!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any users."),})
     @ApiImplicitParam(required = true, name = "User Id", value = "Enter user Id", dataType = "Long")
-    ResponseEntity<Object> delete(@RequestParam("id") Long id) {
+    ResponseEntity<Object> delete(Long id) {
         authUserService.deleteAuthUser(id);
         return ResponseEntity.ok("Auth user id: " + id + " deleted successful");
     }

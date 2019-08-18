@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: prod
   application:
     name: dobraszwalnia-time-service
   output:
@@ -24,6 +26,15 @@ spring:
       hibernate:
         hbm2ddl:
           import_files: /roles.sql
+
+  groovy:
+    template:
+      check-template-location: false
+  #logging:
+#  level:
+#    org.springframework: ERROR
+#    com.eszwalnia: DEBUG
+
 
 server:
   port: 8089
