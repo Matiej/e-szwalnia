@@ -5,10 +5,11 @@ import com.eszwalnia.timesh.authUser.domain.dto.AuthUserDto;
 import com.eszwalnia.timesh.authUser.domain.dto.CreateAuthUserDto;
 import com.eszwalnia.timesh.exceptionHandler.ExistEmailException;
 import org.hibernate.HibernateException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface AuthUserService {
+public interface AuthUserService extends UserDetailsService {
 
     AuthUserDto createAuthUser(CreateAuthUserDto CreateAuthUserDto) throws HibernateException, ExistEmailException;
 

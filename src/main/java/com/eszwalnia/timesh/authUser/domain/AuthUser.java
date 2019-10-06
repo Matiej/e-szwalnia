@@ -33,6 +33,8 @@ public class AuthUser {
     private LocalDateTime firstLogon;
     @Column(name = "AUH_LAST_LOGON")
     private LocalDateTime lastLogon;
+    @Column(name = "AUH_IS_ENABLED")
+    private boolean isEnabled;
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToMany

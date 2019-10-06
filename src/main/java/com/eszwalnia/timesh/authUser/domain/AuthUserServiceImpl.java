@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -30,17 +32,20 @@ class AuthUserServiceImpl implements AuthUserService {
 
     @Override
     @Transactional
-    public AuthUserDto createAuthUser(CreateAuthUserDto createAuthUserDto) throws HibernateException, ExistEmailException{
+    public AuthUserDto createAuthUser(CreateAuthUserDto createAuthUserDto) throws HibernateException, ExistEmailException {
+        if (isUserEmailExist(createAuthUserDto.getEmail())) {
+            throw new ExistEmailException("There is an account with that email address: " + createAuthUserDto.getEmail() +
+                    " Can't CREATE user!");
+        }
+        //todo jak bedzie z frontu to wtedy wywalic ten zapis
+        createAuthUserDto.setCreatedDate(LocalDateTime.now().withNano(0));
         AuthUser createdAuthUser = createAuthUserDtoConventer.convertToAuthUser(createAuthUserDto);
-        createdAuthUser.setCreatedDate(LocalDateTime.now().withNano(0));
+        createdAuthUser.setEnabled(true);
         try {
-            if (isUserEmailExist(0L, createAuthUserDto.getEmail())) {
-                throw new ExistEmailException("There is an account with that email address: " + createAuthUserDto.getEmail() +
-                        " Can't CREATE user!");
-            }
+
             authUserRepository.save(createdAuthUser);
             log.info("Created auth user: " + "\nID-> " + createdAuthUser.getId() + "\nEmail->" + createdAuthUser.getEmail());
-            log.debug("Created auth user: {} \n {} \n {}", createdAuthUser,createdAuthUser.getAuthUserRoleSet(), createdAuthUser.getEmployee());
+            log.debug("Created auth user: {} \n {} \n {}", createdAuthUser, createdAuthUser.getAuthUserRoleSet(), createdAuthUser.getEmployee());
             return authUserMapper.authUserToDto(createdAuthUser, new CycleAvoidingMappingContext());
         } catch (HibernateException e) {
             throw new RuntimeException("Can't find auth users because of some db error ", e);
@@ -63,7 +68,7 @@ class AuthUserServiceImpl implements AuthUserService {
     @Override
     public AuthUserDto updateAuthUser(AuthUserDto authUserDto) throws ExistEmailException, HibernateException,
             AuthUserNotFoundException {
-        log.debug("Update data for auth user: {} \n {} \n {}", authUserDto,authUserDto.getAuthUserRoleSet(), authUserDto.getEmployee());
+        log.debug("Update data for auth user: {} \n {} \n {}", authUserDto, authUserDto.getAuthUserRoleSet(), authUserDto.getEmployee());
         try {
             Optional<AuthUser> authUser = authUserRepository.findById(authUserDto.getId());
             if (authUser.isPresent()) {
@@ -89,11 +94,12 @@ class AuthUserServiceImpl implements AuthUserService {
     public boolean deleteAuthUser(Long id) throws AuthUserNotFoundException, HibernateException {
         boolean isDeleted;
         try {
-            if(authUserRepository.existsById(id)) {
+            if (authUserRepository.existsById(id)) {
                 log.warn("Going to delete auth user id: " + id);
                 authUserRepository.deleteById(id);
                 isDeleted = true;
-                log.info("Auth user id: " + id + " deleted!"); ;
+                log.info("Auth user id: " + id + " deleted!");
+                ;
             } else {
                 throw new AuthUserNotFoundException("Auth user id: " + id + " isn't exist. Cant' delete");
             }
@@ -103,10 +109,19 @@ class AuthUserServiceImpl implements AuthUserService {
         return isDeleted;
     }
 
-
+    //todo-> if user logged get his ID and try to find
     private boolean isUserEmailExist(Long id, String email) {
         return authUserRepository.findByIdNot(id)
                 .stream()
                 .anyMatch(e -> e.getEmail().toLowerCase().equals(email.toLowerCase()));
+    }
+
+    private boolean isUserEmailExist(String email) {
+        return isUserEmailExist(0L, email);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return null;
     }
 }

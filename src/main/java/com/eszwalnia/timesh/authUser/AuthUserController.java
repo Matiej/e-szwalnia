@@ -27,8 +27,8 @@ public class AuthUserController {
             @ApiResponse(code = 201, message = "Auth user created and saved to data base successful"),
             @ApiResponse(code = 409, message = "Auth user already exists, can't create"),
             @ApiResponse(code = 503, message = "Data base server error. Can't create auth user.")})
-    ResponseEntity<Object> create(@RequestBody @Valid CreateAuthUserDto createAuthUserDto) {
-        AuthUserDto createdAuthUser = authUserService.createAuthUser(createAuthUserDto);
+    ResponseEntity<Object> create(@RequestBody @Valid CreateAuthUserDto createAuthUser) {
+        AuthUserDto createdAuthUser = authUserService.createAuthUser(createAuthUser);
         URI savedUri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .query("id={id}")
@@ -48,8 +48,8 @@ public class AuthUserController {
             @ApiResponse(code = 404, message = "Auth user does not exist! Can't update!"),
             @ApiResponse(code = 409, message = "Email/login already exists, can't update"),
             @ApiResponse(code = 503, message = "Data base server error. Can't update auth user.")})
-    ResponseEntity<Object> update(@RequestBody @Valid AuthUserDto authUserDto) {
-        AuthUserDto updatedAuthUser = authUserService.updateAuthUser(authUserDto);
+    ResponseEntity<Object> update(@RequestBody @Valid AuthUserDto authUser) {
+        AuthUserDto updatedAuthUser = authUserService.updateAuthUser(authUser);
         return ResponseEntity.ok(updatedAuthUser);
     }
 
@@ -63,14 +63,14 @@ public class AuthUserController {
         return ResponseEntity.ok(authUserService.findAll());
     }
 
-    @DeleteMapping("delte")
+    @DeleteMapping("/delete")
     @ApiOperation(value = "Delete authUser by id")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "All users loaded from db successful."),
-            @ApiResponse(code = 404, message = "Auth user does not exist! Can't update!"),
-            @ApiResponse(code = 503, message = "Server error. Can't get any users."),})
-    @ApiImplicitParam(required = true, name = "User Id", value = "Enter user Id", dataType = "Long")
-    ResponseEntity<Object> delete(Long id) {
+            @ApiResponse(code = 200, message = "User deleted successful."),
+            @ApiResponse(code = 404, message = "Auth user does not exist! Can't delete!"),
+            @ApiResponse(code = 503, message = "Server error. Can't delete any users."),})
+    @ApiImplicitParam(required = true, name = "id", value = "Enter user Id", dataTypeClass = Long.class ,paramType = "query")
+    ResponseEntity<Object> delete(@RequestParam Long id) {
         authUserService.deleteAuthUser(id);
         return ResponseEntity.ok("Auth user id: " + id + " deleted successful");
     }
