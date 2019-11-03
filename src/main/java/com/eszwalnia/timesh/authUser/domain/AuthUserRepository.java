@@ -9,4 +9,5 @@ import java.util.List;
 public interface AuthUserRepository extends JpaRepository<AuthUser, Long> {
 
     List<AuthUser> findByIdNot(Long id);
+    AuthUser findByEmail(String email);
 }
