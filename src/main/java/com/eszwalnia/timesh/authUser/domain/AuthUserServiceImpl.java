@@ -5,14 +5,18 @@ import com.eszwalnia.timesh.authUser.domain.dto.AuthUserDto;
 import com.eszwalnia.timesh.authUser.domain.dto.CreateAuthUserDto;
 import com.eszwalnia.timesh.configuration.CycleAvoidingMappingContext;
 import com.eszwalnia.timesh.exceptionHandler.ExistEmailException;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -30,6 +34,9 @@ class AuthUserServiceImpl implements AuthUserService {
     private final AuthUserRepository authUserRepository;
     private final CreateAuthUserDtoConventer createAuthUserDtoConventer;
 
+    @Autowired
+    private PasswordEncoder encode;
+
     @Override
     @Transactional
     public AuthUserDto createAuthUser(CreateAuthUserDto createAuthUserDto) throws HibernateException, ExistEmailException {
@@ -41,6 +48,8 @@ class AuthUserServiceImpl implements AuthUserService {
         createAuthUserDto.setCreatedDate(LocalDateTime.now().withNano(0));
         AuthUser createdAuthUser = createAuthUserDtoConventer.convertToAuthUser(createAuthUserDto);
         createdAuthUser.setEnabled(true);
+        createdAuthUser.setPassword(encode.encode(createAuthUserDto.getPassword()));
+        createdAuthUser.setMatchPassword(encode.encode(createAuthUserDto.getMatchPassword()));
         try {
 
             authUserRepository.save(createdAuthUser);
@@ -109,7 +118,7 @@ class AuthUserServiceImpl implements AuthUserService {
         return isDeleted;
     }
 
-    //todo-> if user logged get his ID and try to find
+    //todo-> if user logged get his ID and try to find glupie to jest.
     private boolean isUserEmailExist(Long id, String email) {
         return authUserRepository.findByIdNot(id)
                 .stream()
@@ -121,7 +130,10 @@ class AuthUserServiceImpl implements AuthUserService {
     }
 
     @Override
+    @Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)//beacuse of lazy collection
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return null;
+        AuthUser authUserRepositoryByEmail = authUserRepository.findByEmail(s);
+        AuthUserDto authUserDto = authUserMapper.authUserToDto(authUserRepositoryByEmail, new CycleAvoidingMappingContext());
+        return authUserDto;
     }
 }

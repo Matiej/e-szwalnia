@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -27,7 +29,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/swagger-ui.html#/swagger-welcome-controller/**",
             "/v2/api-docs",
             "/webjars/**",
-            "/sw",
+            "/h2/**",
+//            "/"
 //            "/users/adduser_n",
 //            "/online/movielist_n",
 //            "/online/onlinedetail_n",
@@ -50,24 +53,35 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .csrf()
-                .disable()
+                .csrf().disable()
+                .headers().disable()
                 .authorizeRequests()
                 .antMatchers(AUTH_WISHLIST).permitAll()
-                .antMatchers("/**/*").denyAll()
+//                .antMatchers("/**/*").denyAll()
                 .anyRequest().hasAnyAuthority("ADMIN", "USER", "TESTER")
                 .and()
                 .formLogin()
-                .loginPage("/users/login").permitAll()
-//                .successHandler(loginSuccessHandler())
-//                .failureHandler(loginFailureHandler())
-                .and()
-                .logout()
+//                .loginPage("/users/login").permitAll()
+                .successHandler(loginSuccessHandler())
+                .failureHandler(loginFailureHandler())
                 .permitAll();
 //                .logoutSuccessUrl("/users/logout");
     }
 
+    public AuthenticationSuccessHandler loginSuccessHandler() {
+        return (request, response, authentication) -> {
+            response.sendRedirect("/");
+            request.getSession().setAttribute("flash", new FlashMessage("Login successful", FlashMessage.Status.SUCCESS));
+            authentication.getDetails();
+        };
+    }
 
+    public AuthenticationFailureHandler loginFailureHandler() {
+        return (request, response, exception) -> {
+            request.getSession().setAttribute("flash", new FlashMessage("Wrong login or password", FlashMessage.Status.FAILURE));
+            response.sendRedirect("/");
+        };
+    }
 
 
 }
